@@ -1,0 +1,3 @@
+[submodule "themes/hugo-demo"]
+	path = themes/hugo-test
+	url = https://github.com/komjordan/hugo-test.git
