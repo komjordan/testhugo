@@ -1,0 +1,13 @@
+{
+  "name": "claudepop-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Moteur de typographie cinétique local pour clip Claude Pop (prototype).",
+  "scripts": {
+    "render": "node render/render.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.47.0"
+  }
+}

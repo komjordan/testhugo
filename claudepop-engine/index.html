@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Claude Pop — moteur de typographie cinétique (prototype)</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="panel">
+      <h1>Claude Pop — moteur de prévisualisation locale</h1>
+      <p class="hint">
+        Chargez <strong>votre</strong> fichier audio et <strong>votre</strong> fichier de paroles
+        (JSON, voir <code>data/schema.md</code>) depuis votre disque. Rien n'est envoyé nulle part
+        ni ajouté au dépôt — les fichiers restent dans la mémoire de l'onglet.
+      </p>
+      <div class="controls">
+        <label class="file-btn">
+          Charger un audio local
+          <input type="file" id="audioInput" accept="audio/*" />
+        </label>
+        <label class="file-btn">
+          Charger des paroles (.json)
+          <input type="file" id="lyricsInput" accept="application/json" />
+        </label>
+        <button id="loadDemoBtn" class="ghost-btn">Charger la démo intégrée</button>
+        <button id="playBtn" disabled>Lecture</button>
+        <span id="status" class="status">En attente d'un audio…</span>
+      </div>
+    </header>
+
+    <main class="stage-wrap">
+      <canvas id="stage"></canvas>
+    </main>
+
+    <audio id="audioEl"></audio>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

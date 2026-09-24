@@ -1,0 +1,15 @@
+{
+  "title": "Demo — texte de démonstration (contenu original, non lié à une chanson existante)",
+  "bpm": 128,
+  "durationSec": 20,
+  "sections": [
+    { "id": "d1", "type": "hero",  "start": 0.0, "end": 2.4, "text": "PROTOTYPE\nMOTEUR D'ANIMATION", "emphasis": "high" },
+    { "id": "d2", "type": "line",  "start": 2.4, "end": 5.0, "text": "Une ligne de test qui défile", "emphasis": "normal" },
+    { "id": "d3", "type": "line",  "start": 5.0, "end": 7.4, "text": "pour vérifier le calage", "emphasis": "normal" },
+    { "id": "d4", "type": "build", "start": 7.4, "end": 10.2, "text": "les mots s'assemblent, s'accélèrent", "emphasis": "normal" },
+    { "id": "d5", "type": "chant", "start": 10.2, "end": 13.6, "text": "REFRAIN DE DÉMO", "emphasis": "high" },
+    { "id": "d6", "type": "line",  "start": 13.6, "end": 16.0, "text": "un second couplet, plus calme", "emphasis": "low" },
+    { "id": "d7", "type": "chant", "start": 16.0, "end": 18.4, "text": "REFRAIN DE DÉMO", "emphasis": "high" },
+    { "id": "d8", "type": "outro", "start": 18.4, "end": 20.0, "text": "FIN DU PROTOTYPE", "emphasis": "normal" }
+  ]
+}

@@ -1,0 +1,9 @@
+node_modules/
+out/
+local-assets/*
+!local-assets/.gitkeep
+*.mp3
+*.wav
+*.m4a
+*.mp4
+!demo/demo-bed.mp3
