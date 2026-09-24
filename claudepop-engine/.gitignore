@@ -7,3 +7,4 @@ local-assets/*
 *.m4a
 *.mp4
 !demo/demo-bed.mp3
+!demo/demo-bed-v2.mp3

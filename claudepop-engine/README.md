@@ -76,6 +76,27 @@ pour vérifier que le pipeline audio→rendu fonctionne. Elle n'est pas destiné
 npm run render -- --lyrics data/demo-lyrics.json --audio demo/demo-bed.mp3 --out out/demo.mp4
 ```
 
+### Démo v2 — direction artistique ambitieuse
+
+`data/demo-lyrics-v2.json` + `demo/demo-bed-v2.mp3` (même principe : audio
+synthétisé, texte de test) démontrent la nouvelle direction artistique sur 3
+scènes enchaînées par transitions :
+
+- `narrative` : Bloom dans un décor d'atelier détaillé (parallax, accessoires,
+  panneau diégétique portant le texte), caméra en dolly lent.
+- `typo-spectacle` : typographie géante à extrusion, cascade lettre par
+  lettre, décor à bandes diagonales, punch-in caméra.
+- `chorus-energetic` : Bloom + deux personnages secondaires (Spark, Glow) en
+  formation de danse, fond à rayons pulsés, flashs sur les temps forts, hook
+  géant en triple ombre sérigraphie.
+
+Les scènes s'enchaînent avec des transitions dédiées (déchirure papier, iris,
+flash) définies dans `src/transitions.js`.
+
+```bash
+npm run render -- --lyrics data/demo-lyrics-v2.json --audio demo/demo-bed-v2.mp3 --out out/demo-v2.mp4
+```
+
 ## Étendre le moteur pour la chanson complète
 
 Une fois vos droits vérifiés :

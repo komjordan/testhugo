@@ -1,0 +1,14 @@
+{
+  "title": "Demo v2 — direction artistique ambitieuse (texte de test, contenu original)",
+  "bpm": 128,
+  "durationSec": 20,
+  "sections": [
+    { "id": "n1", "type": "narrative", "start": 0.0, "end": 3.2, "text": "Bienvenue dans l'atelier", "emphasis": "normal", "pose": "point", "expr": "happy" },
+    { "id": "n2", "type": "narrative", "start": 3.2, "end": 6.6, "text": "où les idées prennent forme", "emphasis": "normal", "pose": "sing", "expr": "excited" },
+    { "id": "t1", "type": "typo-spectacle", "start": 6.6, "end": 9.0, "text": "CRÉATION", "emphasis": "high" },
+    { "id": "t2", "type": "typo-spectacle", "start": 9.0, "end": 11.4, "text": "EN MOUVEMENT", "emphasis": "high" },
+    { "id": "c1", "type": "chorus-energetic", "start": 11.4, "end": 15.0, "text": "ON DANSE ENSEMBLE", "emphasis": "high" },
+    { "id": "c2", "type": "chorus-energetic", "start": 15.0, "end": 18.6, "text": "TOUT S'ACCÉLÈRE", "emphasis": "high" },
+    { "id": "o1", "type": "outro", "start": 18.6, "end": 20.0, "text": "FIN DE LA DÉMO 2", "emphasis": "normal" }
+  ]
+}
