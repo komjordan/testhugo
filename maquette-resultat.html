@@ -48,6 +48,13 @@
   .gen label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
   .gen input,.gen select{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit}
   .gen textarea{width:100%;min-height:340px;margin-top:12px;padding:12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:13px/1.5 ui-monospace,Menlo,monospace}
+  .gen .checks{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .gen .checks label{display:flex;align-items:center;gap:6px;margin:0;font-size:13px;color:var(--text);border:1px solid var(--line);border-radius:999px;padding:4px 10px;cursor:pointer}
+  .gen .checks input{width:auto}
+  .gen .known{background:rgba(77,220,154,.1);border:1px solid var(--green);border-radius:8px;padding:8px 12px;margin-top:12px;font-size:14px}
+  .gen .unknown{background:rgba(255,176,77,.1);border:1px solid var(--orange);border-radius:8px;padding:8px 12px;margin-top:12px;font-size:14px}
+  .gen .btns{display:flex;flex-wrap:wrap;gap:10px}
+  .gen button.sec{background:transparent;border:1px solid var(--accent);color:var(--text)}
   .gen .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .gen button{margin-top:12px;padding:10px 16px;border:0;border-radius:8px;background:var(--accent);color:#fff;font:inherit;cursor:pointer}
   @media(max-width:520px){.gen .row{grid-template-columns:1fr}}
@@ -149,24 +156,42 @@
       <span>Demande l'effacement de tes données à chaque organisme. S'il ne répond pas sous un mois, saisis la CNIL. Les organismes doivent notifier les violations de données qui présentent un risque pour toi.</span></div>
   </div>
 
-  <h2>Générer ta demande RGPD</h2>
+  <h2>Contacter l'organisme (courrier pré-rédigé)</h2>
   <div class="card gen">
-    <p class="meta" style="margin:0">Remplis les champs : le courrier se met à jour. Rien n'est envoyé ni enregistré, tout reste dans ton navigateur.</p>
+    <p class="meta" style="margin:0">Choisis l'organisme : le courrier s'adapte aux données qui ont fuité. Tu peux tout modifier avant l'envoi. Rien n'est envoyé par le site, tout reste dans ton navigateur.</p>
+
+    <label for="g-org">Organisme concerné</label>
+    <select id="g-org"></select>
+
+    <label>Données exposées (décoche ou ajoute ce qui ne s'applique pas)</label>
+    <div class="checks" id="g-data"></div>
+
     <div class="row">
       <div><label for="g-nom">Ton nom et prénom</label><input id="g-nom" placeholder="Prénom NOM"></div>
-      <div><label for="g-org">Organisme concerné</label><input id="g-org" placeholder="ex. ShopExemple.fr"></div>
+      <div><label for="g-mail">Email utilisé chez eux</label><input id="g-mail" placeholder="exemple@email.com"></div>
     </div>
-    <div class="row">
-      <div><label for="g-mail">Email utilisé</label><input id="g-mail" placeholder="exemple@email.com"></div>
-      <div><label for="g-adr">Adresse postale</label><input id="g-adr" placeholder="12 rue Exemple, 75000 Paris"></div>
-    </div>
+    <label for="g-adr">Adresse postale</label><input id="g-adr" placeholder="12 rue Exemple, 75000 Paris">
+
     <label for="g-type">Type de demande</label>
     <select id="g-type">
       <option value="efface">Effacement + origine de la fuite</option>
       <option value="acces">Accès à mes données seulement</option>
     </select>
-    <textarea id="g-out" readonly></textarea>
-    <button type="button" id="g-copy">Copier le courrier</button>
+
+    <div id="g-status"></div>
+
+    <label for="g-to">Destinataire (email du DPO)</label>
+    <input id="g-to" type="email" placeholder="dpo@organisme.fr">
+    <label for="g-subj">Objet</label>
+    <input id="g-subj">
+    <textarea id="g-out"></textarea>
+
+    <div class="btns">
+      <button type="button" id="g-mailto">Ouvrir ma messagerie</button>
+      <button type="button" class="sec" id="g-copy">Copier le courrier</button>
+      <button type="button" class="sec" id="g-regen">Régénérer le texte</button>
+    </div>
+    <p class="meta" id="g-hint" style="margin:10px 0 0"></p>
   </div>
 
   <h2>Démarches utiles</h2>
@@ -182,33 +207,106 @@
 </div>
 <script>
 (function(){
-  var ids=['g-nom','g-org','g-mail','g-adr','g-type'];
-  var el=function(i){return document.getElementById(i)};
-  function build(){
-    var nom=el('g-nom').value||'[Prénom NOM]', org=el('g-org').value||"[Nom de l'organisme]",
-        mail=el('g-mail').value||'[email]', adr=el('g-adr').value||'[adresse postale]',
-        efface=el('g-type').value==='efface';
-    var date=new Date().toLocaleDateString('fr-FR');
-    var t=nom+'\n'+adr+'\n'+mail+'\n\n'+
-      org+'\nÀ l\'attention du délégué à la protection des données (DPO)\n\n'+
-      'Le '+date+'\n\n'+
-      'Objet : '+(efface?'Demande d\'effacement de mes données personnelles (art. 17 RGPD) et d\'information sur leur origine':'Demande d\'accès à mes données personnelles (art. 15 RGPD)')+'\n\n'+
-      'Madame, Monsieur,\n\n'+
-      'J\'ai constaté que des données personnelles me concernant, associées à l\'adresse '+mail+', ont été exposées lors d\'une violation de données impliquant votre organisme.\n\n'+
-      'En application du RGPD, je vous demande :\n'+
-      '1. de me communiquer l\'ensemble des données me concernant que vous détenez (art. 15), ainsi que leur origine, les finalités du traitement et la liste des destinataires ;\n'+
-      (efface?'2. de procéder à l\'effacement complet de ces données dans les meilleurs délais (art. 17) ;\n3. de me confirmer par écrit cet effacement, y compris auprès de vos sous-traitants ;\n':'')+
-      (efface?'4':'2')+'. de m\'indiquer si cette violation de données a été notifiée à la CNIL et si vous avez informé les personnes concernées (art. 33 et 34).\n\n'+
-      'Conformément à l\'article 12.3 du RGPD, vous disposez d\'un délai d\'un mois à compter de la réception de ce courrier pour me répondre. À défaut, je saisirai la CNIL.\n\n'+
-      'Pour vérifier mon identité, je reste disponible pour vous transmettre un justificatif sur demande. Je vous demande de ne pas me réclamer plus d\'éléments que nécessaire.\n\n'+
-      'Je vous prie d\'agréer, Madame, Monsieur, l\'expression de mes salutations distinguées.\n\n'+nom;
-    el('g-out').value=t;
+  // Données fictives de démonstration : adresses DPO d'exemple, à remplacer par une vraie base d'organismes.
+  var ORGS=[
+    {id:'banque',  name:'Banque / assurance (exemple)',  dpo:'dpo@banque-exemple.example',    data:['IBAN / RIB','Nom / Prénom','Date de naissance','Adresse postale','Téléphone','Email']},
+    {id:'telecom', name:'Opérateur télécom (exemple)',   dpo:'dpo@operateur-exemple.example', data:['Téléphone','Adresse postale','Email',"Pièce d'identité",'Numéro de sécurité sociale']},
+    {id:'boutique',name:'Boutique en ligne (exemple)',   dpo:'',                              data:['Mot de passe','Email','Historique de commandes','Adresse de livraison']},
+    {id:'forum',   name:'Forum / réseau social (exemple)',dpo:'',                             data:['Mot de passe','Pseudo','Adresse IP','Email']},
+    {id:'autre',   name:'Autre organisme…',              dpo:'',                              data:['Nom / Prénom','Email','Adresse postale','Téléphone','Date de naissance','Mot de passe','IBAN / RIB',"Pièce d'identité"]}
+  ];
+  var ALL=['Nom / Prénom','Email','Adresse postale','Téléphone','Date de naissance','Mot de passe','IBAN / RIB',"Pièce d'identité",'Numéro de sécurité sociale','Historique de commandes','Adresse de livraison','Pseudo','Adresse IP'];
+  // Demandes supplémentaires selon le type de donnée exposé
+  var EXTRA={
+    'IBAN / RIB':"Mon IBAN ayant été exposé, je vous demande de renforcer la surveillance de mon compte, de me signaler tout mandat ou prélèvement inhabituel et de m'indiquer la procédure pour contester un débit non autorisé.",
+    "Pièce d'identité":"Ma pièce d'identité ayant été exposée, je vous demande d'ajouter une mention de vigilance sur mon dossier et de me prévenir de toute demande suspecte faite en mon nom.",
+    'Numéro de sécurité sociale':"Mon numéro de sécurité sociale ayant été exposé, je vous demande de ne plus l'utiliser comme identifiant et de m'indiquer les mesures de sécurité prises.",
+    'Mot de passe':"Mon mot de passe ayant été exposé, je vous demande de m'indiquer s'il était stocké en clair ou haché, et de forcer sa réinitialisation."
+  };
+  var $=function(i){return document.getElementById(i)};
+  var edited=false, mailtoMax=1800;
+
+  function selectedOrg(){var v=$('g-org').value;return ORGS.filter(function(o){return o.id===v})[0]||ORGS[0]}
+  function checked(){return Array.prototype.slice.call($('g-data').querySelectorAll('input:checked')).map(function(i){return i.value})}
+
+  function fillOrgs(){
+    $('g-org').innerHTML=ORGS.map(function(o){return '<option value="'+o.id+'">'+o.name+'</option>'}).join('');
   }
-  ids.forEach(function(i){el(i).addEventListener('input',build);el(i).addEventListener('change',build)});
-  el('g-copy').addEventListener('click',function(){
-    el('g-out').select();
-    (navigator.clipboard?navigator.clipboard.writeText(el('g-out').value):Promise.reject()).catch(function(){document.execCommand('copy')});
-    this.textContent='Copié ✔';var b=this;setTimeout(function(){b.textContent='Copier le courrier'},1500);
+  function fillData(){
+    var o=selectedOrg(), list=ALL.filter(function(d){return o.data.indexOf(d)>-1||false});
+    // on affiche tout le catalogue, coché si l'organisme l'a exposé
+    $('g-data').innerHTML=ALL.map(function(d,i){
+      return '<label><input type="checkbox" value="'+d+'"'+(o.data.indexOf(d)>-1?' checked':'')+'> '+d+'</label>';
+    }).join('');
+    Array.prototype.forEach.call($('g-data').querySelectorAll('input'),function(i){i.addEventListener('change',function(){edited=false;build()})});
+  }
+  function status(){
+    var o=selectedOrg();
+    if(o.dpo){
+      $('g-to').value=o.dpo;
+      $('g-status').innerHTML='<div class="known">✔ Adresse du DPO connue : <b>'+o.dpo+'</b>. Le destinataire est rempli, tu peux ouvrir ta messagerie en un clic.</div>';
+    }else{
+      $('g-to').value='';
+      $('g-status').innerHTML='<div class="unknown">⚠ Adresse du DPO inconnue pour cet organisme. Cherche « DPO », « données personnelles » ou « RGPD » dans ses mentions légales ou sa politique de confidentialité, ou utilise son formulaire de contact. Colle ensuite l\'adresse dans « Destinataire ». À défaut, envoie le courrier par voie postale au siège (de préférence en recommandé).</div>';
+    }
+  }
+  function build(){
+    if(edited)return;
+    var o=selectedOrg(), data=checked(), efface=$('g-type').value==='efface';
+    var nom=$('g-nom').value||'[Prénom NOM]', mail=$('g-mail').value||'[email]', adr=$('g-adr').value||'[adresse postale]';
+    var org=o.id==='autre'?"[Nom de l'organisme]":o.name.replace(' (exemple)','');
+    var date=new Date().toLocaleDateString('fr-FR');
+    var n=1, lines=[];
+    lines.push(n++ +". de me communiquer l'ensemble des données me concernant que vous détenez (art. 15), ainsi que leur origine, les finalités du traitement et la liste des destinataires ;");
+    if(efface){
+      lines.push(n++ +". de procéder à l'effacement complet de ces données dans les meilleurs délais (art. 17) ;");
+      lines.push(n++ +". de me confirmer par écrit cet effacement, y compris auprès de vos sous-traitants ;");
+    }
+    lines.push(n++ +". de m'indiquer si cette violation de données a été notifiée à la CNIL et si les personnes concernées ont été informées (art. 33 et 34).");
+    var extras=data.filter(function(d){return EXTRA[d]}).map(function(d){return EXTRA[d]});
+    var t=nom+'\n'+adr+'\n'+mail+'\n\n'+
+      org+"\nÀ l'attention du délégué à la protection des données (DPO)\n\n"+
+      'Le '+date+'\n\n'+
+      "Objet : "+subject()+'\n\n'+
+      'Madame, Monsieur,\n\n'+
+      "J'ai constaté que des données personnelles me concernant, associées à l'adresse "+mail+', ont été exposées lors d\'une violation de données impliquant votre organisme.\n\n'+
+      (data.length?'Les données concernées sont : '+data.join(', ').toLowerCase()+'.\n\n':'')+
+      'En application du RGPD, je vous demande :\n'+lines.join('\n')+'\n\n'+
+      (extras.length?extras.join('\n')+'\n\n':'')+
+      "Conformément à l'article 12.3 du RGPD, vous disposez d'un délai d'un mois à compter de la réception de ce courrier pour me répondre. À défaut, je saisirai la CNIL.\n\n"+
+      "Pour vérifier mon identité, je reste disponible pour vous transmettre un justificatif sur demande, dans la limite de ce qui est nécessaire.\n\n"+
+      "Je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.\n\n"+nom;
+    $('g-out').value=t;
+    $('g-subj').value=subject();
+    hint();
+  }
+  function subject(){
+    return $('g-type').value==='efface'?"Demande d'effacement de mes données (art. 17 RGPD) suite à une violation":"Demande d'accès à mes données (art. 15 RGPD) suite à une violation";
+  }
+  function mailtoUrl(){
+    return 'mailto:'+encodeURIComponent($('g-to').value.trim())+'?subject='+encodeURIComponent($('g-subj').value)+'&body='+encodeURIComponent($('g-out').value);
+  }
+  function hint(){
+    var long=mailtoUrl().length>mailtoMax;
+    $('g-hint').textContent=long?"Le courrier est long : certaines messageries tronquent le texte. Si le corps est incomplet, utilise « Copier le courrier » et colle-le dans ton email.":'';
+  }
+  function flash(btn,txt){var o=btn.textContent;btn.textContent=txt;setTimeout(function(){btn.textContent=o},1500)}
+
+  fillOrgs(); fillData(); status();
+  $('g-org').addEventListener('change',function(){edited=false;fillData();status();build()});
+  ['g-nom','g-mail','g-adr','g-type'].forEach(function(i){$(i).addEventListener('input',build);$(i).addEventListener('change',build)});
+  $('g-out').addEventListener('input',function(){edited=true;hint()});
+  $('g-subj').addEventListener('input',hint);
+  $('g-regen').addEventListener('click',function(){edited=false;build();flash(this,'Régénéré ✔')});
+  $('g-mailto').addEventListener('click',function(){
+    if(!$('g-to').value.trim()&&!confirm("Aucun destinataire renseigné. Ouvrir quand même ta messagerie ?"))return;
+    window.location.href=mailtoUrl();
+  });
+  $('g-copy').addEventListener('click',function(){
+    var b=this,txt=$('g-out').value;
+    var ok=function(){flash(b,'Copié ✔')};
+    var fb=function(){$('g-out').select();document.execCommand('copy');ok()};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,fb)}else{fb()}
   });
   build();
 })();
