@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maquette - Résultat de vérification</title>
+<style>
+  :root{
+    --bg:#0f1520; --card:#171f2e; --line:#26324a; --text:#e6ebf5; --muted:#8e9bb5;
+    --accent:#4da3ff; --red:#ff6b6b; --orange:#ffb04d; --green:#4ddc9a;
+  }
+  @media (prefers-color-scheme: light){
+    :root{--bg:#f3f6fb;--card:#fff;--line:#dbe3f0;--text:#1b2433;--muted:#5d6b85;--accent:#1f7ae0;--red:#d93a3a;--orange:#c77a10;--green:#14935f}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  .wrap{max-width:760px;margin:0 auto;padding:20px 16px 60px}
+  .demo{background:var(--orange);color:#000;font-size:13px;text-align:center;padding:6px;font-weight:600}
+  h1{font-size:22px;margin:24px 0 4px}
+  h2{font-size:18px;margin:32px 0 12px}
+  .sub{color:var(--muted);margin:0}
+  .badge{display:inline-flex;align-items:center;gap:6px;background:rgba(77,220,154,.12);color:var(--green);border:1px solid var(--green);border-radius:999px;padding:3px 12px;font-size:13px;margin-top:10px}
+  .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}
+  .stat b{display:block;font-size:28px}
+  .stat span{color:var(--muted);font-size:13px}
+  .stat.red b{color:var(--red)} .stat.orange b{color:var(--orange)}
+  .alert{background:rgba(255,107,107,.1);border:1px solid var(--red);border-radius:12px;padding:12px 14px;margin-top:16px}
+  .breach{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+  .breach header{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+  .breach h3{margin:0;font-size:17px}
+  .meta{color:var(--muted);font-size:13px}
+  .breach p{margin:8px 0;color:var(--muted);font-size:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .chip{font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(127,127,127,.1)}
+  .chip.hi{border-color:var(--red);color:var(--red);background:rgba(255,107,107,.1)}
+  .chip.mid{border-color:var(--orange);color:var(--orange);background:rgba(255,176,77,.1)}
+  .note{font-size:13px;color:var(--muted);margin-top:8px;border-top:1px dashed var(--line);padding-top:8px}
+  .tips{display:grid;gap:10px}
+  .tip{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:12px 14px}
+  .tip.red{border-left-color:var(--red)} .tip.orange{border-left-color:var(--orange)}
+  .tip b{display:block;margin-bottom:2px}
+  .tip span{color:var(--muted);font-size:14px}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .btn{display:block;text-align:center;text-decoration:none;color:var(--text);background:var(--card);border:1px solid var(--accent);border-radius:10px;padding:12px;font-size:14px}
+  .btn.primary{background:var(--accent);color:#fff}
+  footer{margin-top:36px;color:var(--muted);font-size:12px;text-align:center}
+  @media(max-width:520px){.summary{grid-template-columns:1fr}.actions{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="demo">MAQUETTE : données fictives, à titre d'illustration uniquement</div>
+<div class="wrap">
+
+  <h1>Résultat pour exemple@email.com</h1>
+  <p class="sub">Vérifié par email le 04/10/2026 · lien à usage unique, expiré après 15 min</p>
+  <span class="badge">✔ Adresse vérifiée, tu es bien le propriétaire</span>
+
+  <div class="summary">
+    <div class="stat red"><b>3</b><span>fuites trouvées</span></div>
+    <div class="stat orange"><b>2</b><span>avec mot de passe</span></div>
+    <div class="stat"><b>6</b><span>types de données exposés</span></div>
+  </div>
+
+  <div class="alert">
+    ⚠️ <b>Niveau de risque : élevé.</b> Des mots de passe associés à ton email ont été exposés.
+    Si tu les réutilises ailleurs, change-les en priorité.
+  </div>
+
+  <h2>Les fuites qui te concernent</h2>
+
+  <div class="breach">
+    <header><h3>ShopExemple.fr</h3><span class="meta">Fuite : mars 2023 · 2,4 M de comptes</span></header>
+    <p>Une base de clients a été publiée après le piratage d'un site e-commerce.</p>
+    <div class="chips">
+      <span class="chip hi">Mots de passe</span>
+      <span class="chip mid">Téléphone</span>
+      <span class="chip mid">Adresse postale</span>
+      <span class="chip">Email</span>
+      <span class="chip">Nom / Prénom</span>
+    </div>
+    <div class="note">Les valeurs exactes ne sont pas affichées : seuls les <i>types</i> de données exposés le sont.</div>
+  </div>
+
+  <div class="breach">
+    <header><h3>ForumDemo.com</h3><span class="meta">Fuite : janvier 2021 · 780 000 comptes</span></header>
+    <p>Des identifiants de forum ont été exposés.</p>
+    <div class="chips">
+      <span class="chip hi">Mots de passe (hachés)</span>
+      <span class="chip">Email</span>
+      <span class="chip">Pseudo</span>
+    </div>
+  </div>
+
+  <div class="breach">
+    <header><h3>MutuelleTest.fr</h3><span class="meta">Fuite : juin 2019 · 1,1 M de comptes</span></header>
+    <p>Des données de contact d'assurés ont été copiées.</p>
+    <div class="chips">
+      <span class="chip mid">Date de naissance</span>
+      <span class="chip mid">Adresse postale</span>
+      <span class="chip">Email</span>
+    </div>
+  </div>
+
+  <h2>Que faire maintenant ?</h2>
+  <div class="tips">
+    <div class="tip red"><b>1. Change tes mots de passe exposés</b>
+      <span>Commence par ShopExemple et ForumDemo, puis partout où tu as réutilisé le même mot de passe.</span></div>
+    <div class="tip red"><b>2. Utilise un gestionnaire de mots de passe</b>
+      <span>Un mot de passe unique et long par site (Bitwarden, KeePassXC…).</span></div>
+    <div class="tip"><b>3. Active la double authentification (2FA)</b>
+      <span>Surtout sur ta boîte mail, ta banque et tes réseaux sociaux.</span></div>
+    <div class="tip orange"><b>4. Méfie-toi du phishing</b>
+      <span>Ton téléphone et ton adresse sont exposés : attention aux SMS, appels et courriers frauduleux (faux colis, faux conseiller bancaire).</span></div>
+    <div class="tip orange"><b>5. Surveille tes comptes</b>
+      <span>Vérifie tes relevés bancaires et pense aux alias email pour tes inscriptions.</span></div>
+    <div class="tip"><b>6. Exerce ton droit à l'effacement</b>
+      <span>Demande la suppression de tes données au service concerné (RGPD), puis saisis la CNIL s'il ne répond pas.</span></div>
+  </div>
+
+  <h2>Démarches utiles</h2>
+  <div class="actions">
+    <a class="btn primary" href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener">Saisir la CNIL</a>
+    <a class="btn" href="https://www.cybermalveillance.gouv.fr" target="_blank" rel="noopener">Cybermalveillance.gouv.fr</a>
+    <a class="btn" href="https://www.internet-signalement.gouv.fr" target="_blank" rel="noopener">Signaler (PHAROS)</a>
+    <a class="btn" href="#" onclick="return false">Surveiller mon email (alerte)</a>
+  </div>
+
+  <footer>Aucune donnée n'est conservée : ton email est traité en mémoire puis supprimé.</footer>
+</div>
+</body>
+</html>
