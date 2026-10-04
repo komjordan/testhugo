@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Maquette - Résultat de vérification (cas réel)</title>
+<title>Maquette - Résultat de vérification (scénario critique)</title>
 <style>
   :root{
     --bg:#0f1520; --card:#171f2e; --line:#26324a; --text:#e6ebf5; --muted:#8e9bb5;
@@ -25,6 +25,7 @@
   .stat b{display:block;font-size:28px}
   .stat span{color:var(--muted);font-size:13px}
   .stat.red b{color:var(--red)} .stat.orange b{color:var(--orange)} .stat.green b{color:var(--green)}
+  .alert.crit{background:rgba(255,107,107,.1);border-color:var(--red)}
   .alert{background:rgba(255,176,77,.1);border:1px solid var(--orange);border-radius:12px;padding:12px 14px;margin-top:16px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
   .card h3{margin:0 0 4px;font-size:17px}
@@ -49,64 +50,103 @@
 </style>
 </head>
 <body>
-<div class="demo">MAQUETTE : basée sur la fiche visible dans ta capture. Les valeurs sont masquées dans ce fichier.</div>
+<div class="demo">MAQUETTE : scénario hypothétique « tout a fuité ». Données fictives, valeurs masquées.</div>
 <div class="wrap">
 
-  <h1>Résultat pour ko••••••640@gmail.com</h1>
+  <h1>Résultat pour exemple@email.com</h1>
   <p class="sub">Vérifié par email · lien à usage unique, expiré après 15 min</p>
   <span class="badge">✔ Adresse vérifiée, tu es bien le propriétaire</span>
 
   <div class="summary">
-    <div class="stat red"><b>1</b><span>fuite trouvée</span></div>
-    <div class="stat green"><b>0</b><span>mot de passe exposé</span></div>
-    <div class="stat orange"><b>9</b><span>champs exposés</span></div>
+    <div class="stat red"><b>4</b><span>fuites trouvées</span></div>
+    <div class="stat red"><b>2</b><span>avec mot de passe</span></div>
+    <div class="stat red"><b>16</b><span>types de données exposés</span></div>
   </div>
 
-  <div class="alert">
-    ⚠️ <b>Niveau de risque : moyen à élevé.</b> Aucun mot de passe n'apparaît, mais ton identité complète,
-    ta date de naissance, ton adresse et ton téléphone sont exposés. Le risque principal est le phishing ciblé et l'usurpation d'identité.
+  <div class="alert crit">
+    🚨 <b>Niveau de risque : critique.</b> Des données bancaires (IBAN), d'identité et de contact sont exposées.
+    Risques : fraude au prélèvement SEPA, usurpation d'identité, phishing très ciblé. Agis dans l'ordre ci-dessous, en commençant par ta banque.
   </div>
 
-  <h2>La fuite qui te concerne</h2>
+  <h2>Les fuites qui te concernent</h2>
   <div class="card">
-    <h3>Source non identifiée (base de clients française)</h3>
-    <div class="meta">Date de la fuite : inconnue · fiche indexée sur un site de recherche de fuites</div>
-
+    <h3>Banque / assurance (exemple)</h3>
+    <div class="meta">Fuite : 2024 · base de clients</div>
     <table>
       <thead><tr><th>Donnée</th><th>Niveau</th><th>Ce que ton outil affiche</th></tr></thead>
       <tbody>
-        <tr><td>Prénom</td><td><span class="lvl">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
-        <tr><td>Nom</td><td><span class="lvl">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
-        <tr><td>Email</td><td><span class="lvl">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
-        <tr><td>Date de naissance</td><td><span class="lvl hi">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
-        <tr><td>Adresse postale</td><td><span class="lvl hi">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
-        <tr><td>Code postal / Ville</td><td><span class="lvl mid">moyen</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
-        <tr><td>Téléphone</td><td><span class="lvl hi">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
-        <tr><td>Identifiant interne (ID)</td><td><span class="lvl mid">moyen</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>IBAN / RIB</td><td><span class="lvl hi">critique</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Nom / Prénom</td><td><span class="lvl ">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Date de naissance</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Adresse postale</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Téléphone</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Email</td><td><span class="lvl ">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
       </tbody>
     </table>
-    <p class="legend">Ton outil indique seulement <b>qu'un type de donnée est exposé</b>. Il n'affiche jamais la valeur, contrairement au site de recherche de fuites, qui montre la fiche complète à n'importe qui.</p>
   </div>
+  <div class="card">
+    <h3>Opérateur télécom (exemple)</h3>
+    <div class="meta">Fuite : 2023 · base d'abonnés</div>
+    <table>
+      <thead><tr><th>Donnée</th><th>Niveau</th><th>Ce que ton outil affiche</th></tr></thead>
+      <tbody>
+        <tr><td>Téléphone</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Adresse postale</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Email</td><td><span class="lvl ">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Pièce d'identité (n° / scan)</td><td><span class="lvl hi">critique</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Numéro de sécurité sociale</td><td><span class="lvl hi">critique</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Boutique en ligne (exemple)</h3>
+    <div class="meta">Fuite : 2022 · base de clients</div>
+    <table>
+      <thead><tr><th>Donnée</th><th>Niveau</th><th>Ce que ton outil affiche</th></tr></thead>
+      <tbody>
+        <tr><td>Mot de passe</td><td><span class="lvl hi">critique</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Email</td><td><span class="lvl ">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Historique de commandes</td><td><span class="lvl ">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Adresse de livraison</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Forum / réseau social (exemple)</h3>
+    <div class="meta">Fuite : 2020 · base de comptes</div>
+    <table>
+      <thead><tr><th>Donnée</th><th>Niveau</th><th>Ce que ton outil affiche</th></tr></thead>
+      <tbody>
+        <tr><td>Mot de passe (haché)</td><td><span class="lvl hi">critique</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Pseudo</td><td><span class="lvl ">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Adresse IP</td><td><span class="lvl ">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="legend">Ton outil indique seulement <b>qu'un type de donnée est exposé</b>. Il n'affiche jamais la valeur (ni l'IBAN, ni le numéro de téléphone).</p>
 
   <h2>Que faire maintenant ?</h2>
   <div class="tips">
-    <div class="tip red"><b>1. Méfie-toi du phishing ciblé</b>
-      <span>Ton téléphone et ton adresse sont exposés : SMS de faux colis, faux conseiller bancaire, faux impôts. Ne clique pas sur les liens reçus par SMS.</span></div>
-    <div class="tip red"><b>2. Protège ton identité</b>
-      <span>Date de naissance et adresse permettent des tentatives d'usurpation : surveille tes relevés bancaires, tes courriers et ton dossier de crédit.</span></div>
-    <div class="tip orange"><b>3. Active le 2FA partout</b>
-      <span>Boîte mail, banque, réseaux sociaux. Évite le 2FA par SMS quand une application d'authentification est possible.</span></div>
-    <div class="tip orange"><b>4. Utilise des alias email</b>
-      <span>Un alias par site limite les fuites croisées et rend le phishing plus facile à repérer.</span></div>
-    <div class="tip"><b>5. Demande la suppression de la fiche</b>
-      <span>Droit à l'effacement (RGPD) auprès du site qui l'affiche, puis réclamation à la CNIL s'il ne répond pas dans un mois.</span></div>
-    <div class="tip"><b>6. Identifie la source</b>
-      <span>Demande à l'organisme suspecté (ancien e-commerçant, opérateur, etc.) s'il a notifié une violation de données. Il y est obligé légalement.</span></div>
+    <div class="tip red"><b>🔴 Aujourd'hui : appelle ta banque (IBAN exposé)</b>
+      <span>Signale la fuite, demande la surveillance du compte et l'activation des alertes. Un IBAN seul ne permet pas de retirer de l'argent, mais il permet de mettre en place des prélèvements frauduleux. Vérifie tes prélèvements SEPA et conteste immédiatement tout débit non autorisé. Selon le cas, ta banque peut proposer de changer de compte ou d'IBAN.</span></div>
+    <div class="tip red"><b>🔴 Aujourd'hui : change les mots de passe exposés</b>
+      <span>Commence par ta boîte mail, puis la banque et les achats. Un mot de passe unique par site, avec un gestionnaire (Bitwarden, KeePassXC), et le 2FA par application.</span></div>
+    <div class="tip red"><b>🔴 Pièce d'identité exposée</b>
+      <span>Surveille les usurpations (ouverture de crédits, abonnements, comptes en ligne). En cas d'utilisation frauduleuse : dépôt de plainte, signalement au service concerné, et démarches sur service-public.fr (usurpation d'identité).</span></div>
+    <div class="tip orange"><b>🟠 Numéro de sécurité sociale exposé</b>
+      <span>Vérifie ton compte ameli (mot de passe + 2FA), surveille tes remboursements et méfie-toi des faux courriels de l'Assurance maladie.</span></div>
+    <div class="tip orange"><b>🟠 Cette semaine : phishing ciblé</b>
+      <span>Les fraudeurs connaissent ton nom, ton adresse, ta banque. Ne communique jamais de code reçu par SMS. Un vrai conseiller ne te demande pas de « valider une opération » ni de transférer de l'argent. En cas de doute, raccroche et rappelle le numéro officiel.</span></div>
+    <div class="tip orange"><b>🟠 Surveille ton identité</b>
+      <span>Consulte régulièrement tes relevés, tes courriers et ton dossier au fichier de la Banque de France si besoin. Utilise des alias email pour tes nouvelles inscriptions.</span></div>
+    <div class="tip"><b>⚪ Ensuite : exerce tes droits RGPD</b>
+      <span>Demande l'effacement de tes données à chaque organisme. S'il ne répond pas sous un mois, saisis la CNIL. Les organismes doivent notifier les violations de données qui présentent un risque pour toi.</span></div>
   </div>
 
   <h2>Démarches utiles</h2>
   <div class="actions">
     <a class="btn primary" href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener">Saisir la CNIL</a>
+    <a class="btn" href="https://www.service-public.fr" target="_blank" rel="noopener">Service-Public (usurpation d'identité)</a>
     <a class="btn" href="https://www.cybermalveillance.gouv.fr" target="_blank" rel="noopener">Cybermalveillance.gouv.fr</a>
     <a class="btn" href="https://www.internet-signalement.gouv.fr" target="_blank" rel="noopener">Signaler (PHAROS)</a>
     <a class="btn" href="#" onclick="return false">Surveiller mon email (alerte)</a>
