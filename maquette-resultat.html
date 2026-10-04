@@ -45,6 +45,12 @@
   .btn{display:block;text-align:center;text-decoration:none;color:var(--text);background:var(--card);border:1px solid var(--accent);border-radius:10px;padding:12px;font-size:14px}
   .btn.primary{background:var(--accent);color:#fff}
   .legend{color:var(--muted);font-size:13px;margin-top:10px}
+  .gen label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+  .gen input,.gen select{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit}
+  .gen textarea{width:100%;min-height:340px;margin-top:12px;padding:12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:13px/1.5 ui-monospace,Menlo,monospace}
+  .gen .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .gen button{margin-top:12px;padding:10px 16px;border:0;border-radius:8px;background:var(--accent);color:#fff;font:inherit;cursor:pointer}
+  @media(max-width:520px){.gen .row{grid-template-columns:1fr}}
   footer{margin-top:36px;color:var(--muted);font-size:12px;text-align:center}
   @media(max-width:520px){.summary{grid-template-columns:1fr}.actions{grid-template-columns:1fr}th:nth-child(3),td:nth-child(3){display:none}}
 </style>
@@ -143,6 +149,26 @@
       <span>Demande l'effacement de tes données à chaque organisme. S'il ne répond pas sous un mois, saisis la CNIL. Les organismes doivent notifier les violations de données qui présentent un risque pour toi.</span></div>
   </div>
 
+  <h2>Générer ta demande RGPD</h2>
+  <div class="card gen">
+    <p class="meta" style="margin:0">Remplis les champs : le courrier se met à jour. Rien n'est envoyé ni enregistré, tout reste dans ton navigateur.</p>
+    <div class="row">
+      <div><label for="g-nom">Ton nom et prénom</label><input id="g-nom" placeholder="Prénom NOM"></div>
+      <div><label for="g-org">Organisme concerné</label><input id="g-org" placeholder="ex. ShopExemple.fr"></div>
+    </div>
+    <div class="row">
+      <div><label for="g-mail">Email utilisé</label><input id="g-mail" placeholder="exemple@email.com"></div>
+      <div><label for="g-adr">Adresse postale</label><input id="g-adr" placeholder="12 rue Exemple, 75000 Paris"></div>
+    </div>
+    <label for="g-type">Type de demande</label>
+    <select id="g-type">
+      <option value="efface">Effacement + origine de la fuite</option>
+      <option value="acces">Accès à mes données seulement</option>
+    </select>
+    <textarea id="g-out" readonly></textarea>
+    <button type="button" id="g-copy">Copier le courrier</button>
+  </div>
+
   <h2>Démarches utiles</h2>
   <div class="actions">
     <a class="btn primary" href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener">Saisir la CNIL</a>
@@ -154,5 +180,38 @@
 
   <footer>Aucune donnée n'est conservée : l'email est traité en mémoire puis supprimé.</footer>
 </div>
+<script>
+(function(){
+  var ids=['g-nom','g-org','g-mail','g-adr','g-type'];
+  var el=function(i){return document.getElementById(i)};
+  function build(){
+    var nom=el('g-nom').value||'[Prénom NOM]', org=el('g-org').value||"[Nom de l'organisme]",
+        mail=el('g-mail').value||'[email]', adr=el('g-adr').value||'[adresse postale]',
+        efface=el('g-type').value==='efface';
+    var date=new Date().toLocaleDateString('fr-FR');
+    var t=nom+'\n'+adr+'\n'+mail+'\n\n'+
+      org+'\nÀ l\'attention du délégué à la protection des données (DPO)\n\n'+
+      'Le '+date+'\n\n'+
+      'Objet : '+(efface?'Demande d\'effacement de mes données personnelles (art. 17 RGPD) et d\'information sur leur origine':'Demande d\'accès à mes données personnelles (art. 15 RGPD)')+'\n\n'+
+      'Madame, Monsieur,\n\n'+
+      'J\'ai constaté que des données personnelles me concernant, associées à l\'adresse '+mail+', ont été exposées lors d\'une violation de données impliquant votre organisme.\n\n'+
+      'En application du RGPD, je vous demande :\n'+
+      '1. de me communiquer l\'ensemble des données me concernant que vous détenez (art. 15), ainsi que leur origine, les finalités du traitement et la liste des destinataires ;\n'+
+      (efface?'2. de procéder à l\'effacement complet de ces données dans les meilleurs délais (art. 17) ;\n3. de me confirmer par écrit cet effacement, y compris auprès de vos sous-traitants ;\n':'')+
+      (efface?'4':'2')+'. de m\'indiquer si cette violation de données a été notifiée à la CNIL et si vous avez informé les personnes concernées (art. 33 et 34).\n\n'+
+      'Conformément à l\'article 12.3 du RGPD, vous disposez d\'un délai d\'un mois à compter de la réception de ce courrier pour me répondre. À défaut, je saisirai la CNIL.\n\n'+
+      'Pour vérifier mon identité, je reste disponible pour vous transmettre un justificatif sur demande. Je vous demande de ne pas me réclamer plus d\'éléments que nécessaire.\n\n'+
+      'Je vous prie d\'agréer, Madame, Monsieur, l\'expression de mes salutations distinguées.\n\n'+nom;
+    el('g-out').value=t;
+  }
+  ids.forEach(function(i){el(i).addEventListener('input',build);el(i).addEventListener('change',build)});
+  el('g-copy').addEventListener('click',function(){
+    el('g-out').select();
+    (navigator.clipboard?navigator.clipboard.writeText(el('g-out').value):Promise.reject()).catch(function(){document.execCommand('copy')});
+    this.textContent='Copié ✔';var b=this;setTimeout(function(){b.textContent='Copier le courrier'},1500);
+  });
+  build();
+})();
+</script>
 </body>
 </html>
