@@ -86,7 +86,7 @@
   <span class="badge">✔ Adresse vérifiée, tu es bien le propriétaire</span>
 
   <div class="summary">
-    <div class="stat red"><b>4</b><span>fuites trouvées</span></div>
+    <div class="stat red"><b>5</b><span>fuites trouvées</span></div>
     <div class="stat red"><b>2</b><span>avec mot de passe</span></div>
     <div class="stat red"><b>16</b><span>types de données exposés</span></div>
   </div>
@@ -97,6 +97,20 @@
   </div>
 
   <h2>Les fuites qui te concernent</h2>
+  <div class="card">
+    <h3>Free Mobile</h3>
+    <div class="meta">Fuite : octobre 2024 · source indiquée par les sites de recherche de fuites · cas réel d'après tes captures</div>
+    <table>
+      <thead><tr><th>Donnée</th><th>Niveau</th><th>Ce que ton outil affiche</th></tr></thead>
+      <tbody>
+        <tr><td>Nom / Prénom</td><td><span class="lvl">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Email</td><td><span class="lvl">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Téléphone</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Date de naissance</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Adresse postale</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+      </tbody>
+    </table>
+  </div>
   <div class="card">
     <h3>Banque / assurance (exemple)</h3>
     <div class="meta">Fuite : 2024 · base de clients</div>
@@ -230,6 +244,7 @@
 (function(){
   // Données fictives de démonstration : adresses DPO d'exemple, à remplacer par une vraie base d'organismes.
   var ORGS=[
+    {id:'free',    name:'Free Mobile',                   dpo:'',                              data:['Nom / Prénom','Email','Téléphone','Date de naissance','Adresse postale']},
     {id:'banque',  name:'Banque / assurance (exemple)',  dpo:'dpo@banque-exemple.example',    data:['IBAN / RIB','Nom / Prénom','Date de naissance','Adresse postale','Téléphone','Email']},
     {id:'telecom', name:'Opérateur télécom (exemple)',   dpo:'dpo@operateur-exemple.example', data:['Téléphone','Adresse postale','Email',"Pièce d'identité",'Numéro de sécurité sociale']},
     {id:'boutique',name:'Boutique en ligne (exemple)',   dpo:'',                              data:['Mot de passe','Email','Historique de commandes','Adresse de livraison']},
