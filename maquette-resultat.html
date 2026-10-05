@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maquette - Résultat de vérification (scénario critique)</title>
+<style>
+  :root{
+    --bg:#0f1520; --card:#171f2e; --line:#26324a; --text:#e6ebf5; --muted:#8e9bb5;
+    --accent:#4da3ff; --red:#ff6b6b; --orange:#ffb04d; --green:#4ddc9a;
+  }
+  @media (prefers-color-scheme: light){
+    :root{--bg:#f3f6fb;--card:#fff;--line:#dbe3f0;--text:#1b2433;--muted:#5d6b85;--accent:#1f7ae0;--red:#d93a3a;--orange:#c77a10;--green:#14935f}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  .wrap{max-width:760px;margin:0 auto;padding:20px 16px 60px}
+  .demo{background:var(--orange);color:#000;font-size:13px;text-align:center;padding:6px;font-weight:600}
+  h1{font-size:22px;margin:24px 0 4px;word-break:break-all}
+  h2{font-size:18px;margin:32px 0 12px}
+  .sub{color:var(--muted);margin:0}
+  .badge{display:inline-flex;gap:6px;background:rgba(77,220,154,.12);color:var(--green);border:1px solid var(--green);border-radius:999px;padding:3px 12px;font-size:13px;margin-top:10px}
+  .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}
+  .stat b{display:block;font-size:28px}
+  .stat span{color:var(--muted);font-size:13px}
+  .stat.red b{color:var(--red)} .stat.orange b{color:var(--orange)} .stat.green b{color:var(--green)}
+  .alert.crit{background:rgba(255,107,107,.1);border-color:var(--red)}
+  .alert{background:rgba(255,176,77,.1);border:1px solid var(--orange);border-radius:12px;padding:12px 14px;margin-top:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+  .card h3{margin:0 0 4px;font-size:17px}
+  .meta{color:var(--muted);font-size:13px}
+  table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  .hide{font-family:ui-monospace,Menlo,monospace;letter-spacing:.1em;color:var(--muted)}
+  .lvl{font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+  .lvl.hi{border-color:var(--red);color:var(--red)} .lvl.mid{border-color:var(--orange);color:var(--orange)}
+  .tips{display:grid;gap:10px}
+  .tip{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:12px 14px}
+  .tip.red{border-left-color:var(--red)} .tip.orange{border-left-color:var(--orange)}
+  .tip b{display:block;margin-bottom:2px}
+  .tip span{color:var(--muted);font-size:14px}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .btn{display:block;text-align:center;text-decoration:none;color:var(--text);background:var(--card);border:1px solid var(--accent);border-radius:10px;padding:12px;font-size:14px}
+  .btn.primary{background:var(--accent);color:#fff}
+  .legend{color:var(--muted);font-size:13px;margin-top:10px}
+  .gen label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+  .gen input,.gen select{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit}
+  .gen textarea{width:100%;min-height:340px;margin-top:12px;padding:12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:13px/1.5 ui-monospace,Menlo,monospace}
+  .gen .checks{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .gen .checks label{display:flex;align-items:center;gap:6px;margin:0;font-size:13px;color:var(--text);border:1px solid var(--line);border-radius:999px;padding:4px 10px;cursor:pointer}
+  .gen .checks input{width:auto}
+  .gen .known{background:rgba(77,220,154,.1);border:1px solid var(--green);border-radius:8px;padding:8px 12px;margin-top:12px;font-size:14px}
+  .gen .unknown{background:rgba(255,176,77,.1);border:1px solid var(--orange);border-radius:8px;padding:8px 12px;margin-top:12px;font-size:14px}
+  .gen .btns{display:flex;flex-wrap:wrap;gap:10px}
+  .gen button.sec{background:transparent;border:1px solid var(--accent);color:var(--text)}
+  .gen .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .gen button{margin-top:12px;padding:10px 16px;border:0;border-radius:8px;background:var(--accent);color:#fff;font:inherit;cursor:pointer}
+  @media(max-width:520px){.gen .row{grid-template-columns:1fr}}
+  #print-letter{display:none}
+  @media print{
+    @page{size:A4;margin:2cm}
+    body{background:#fff!important;color:#000!important}
+    .demo,.wrap{display:none!important}
+    #print-letter{display:block!important;font:12pt/1.5 Georgia,"Times New Roman",serif;color:#000}
+    #print-letter .pl-top{display:flex;justify-content:space-between;gap:2cm}
+    #print-letter .pl-top div{white-space:pre-line}
+    #print-letter .pl-to{text-align:left;min-width:7cm}
+    #print-letter .pl-lrar{margin:1.2cm 0 .4cm;font-weight:bold;border:1px solid #000;display:inline-block;padding:4px 10px}
+    #print-letter .pl-date{text-align:right;margin:.6cm 0}
+    #print-letter .pl-obj{font-weight:bold;margin-bottom:.6cm}
+    #print-letter .pl-body{white-space:pre-wrap}
+    #print-letter .pl-sign{margin-top:1.2cm}
+  }
+  footer{margin-top:36px;color:var(--muted);font-size:12px;text-align:center}
+  @media(max-width:520px){.summary{grid-template-columns:1fr}.actions{grid-template-columns:1fr}th:nth-child(3),td:nth-child(3){display:none}}
+</style>
+</head>
+<body>
+<div class="demo">MAQUETTE : scénario hypothétique « tout a fuité ». Données fictives, valeurs masquées.</div>
+<div class="wrap">
+
+  <h1>Résultat pour exemple@email.com</h1>
+  <p class="sub">Vérifié par email · lien à usage unique, expiré après 15 min</p>
+  <span class="badge">✔ Adresse vérifiée, tu es bien le propriétaire</span>
+
+  <div class="summary">
+    <div class="stat red"><b>5</b><span>fuites trouvées</span></div>
+    <div class="stat red"><b>2</b><span>avec mot de passe</span></div>
+    <div class="stat red"><b>16</b><span>types de données exposés</span></div>
+  </div>
+
+  <div class="alert crit">
+    🚨 <b>Niveau de risque : critique.</b> Des données bancaires (IBAN), d'identité et de contact sont exposées.
+    Risques : fraude au prélèvement SEPA, usurpation d'identité, phishing très ciblé. Agis dans l'ordre ci-dessous, en commençant par ta banque.
+  </div>
+
+  <h2>Les fuites qui te concernent</h2>
+  <div class="card">
+    <h3>Free Mobile</h3>
+    <div class="meta">Fuite : octobre 2024 · source indiquée par les sites de recherche de fuites · cas réel d'après tes captures</div>
+    <table>
+      <thead><tr><th>Donnée</th><th>Niveau</th><th>Ce que ton outil affiche</th></tr></thead>
+      <tbody>
+        <tr><td>Nom / Prénom</td><td><span class="lvl">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Email</td><td><span class="lvl">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Téléphone</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Date de naissance</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Adresse postale</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Banque / assurance (exemple)</h3>
+    <div class="meta">Fuite : 2024 · base de clients</div>
+    <table>
+      <thead><tr><th>Donnée</th><th>Niveau</th><th>Ce que ton outil affiche</th></tr></thead>
+      <tbody>
+        <tr><td>IBAN / RIB</td><td><span class="lvl hi">critique</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Nom / Prénom</td><td><span class="lvl ">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Date de naissance</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Adresse postale</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Téléphone</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Email</td><td><span class="lvl ">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Opérateur télécom (exemple)</h3>
+    <div class="meta">Fuite : 2023 · base d'abonnés</div>
+    <table>
+      <thead><tr><th>Donnée</th><th>Niveau</th><th>Ce que ton outil affiche</th></tr></thead>
+      <tbody>
+        <tr><td>Téléphone</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Adresse postale</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Email</td><td><span class="lvl ">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Pièce d'identité (n° / scan)</td><td><span class="lvl hi">critique</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Numéro de sécurité sociale</td><td><span class="lvl hi">critique</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Boutique en ligne (exemple)</h3>
+    <div class="meta">Fuite : 2022 · base de clients</div>
+    <table>
+      <thead><tr><th>Donnée</th><th>Niveau</th><th>Ce que ton outil affiche</th></tr></thead>
+      <tbody>
+        <tr><td>Mot de passe</td><td><span class="lvl hi">critique</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Email</td><td><span class="lvl ">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Historique de commandes</td><td><span class="lvl ">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Adresse de livraison</td><td><span class="lvl mid">élevé</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Forum / réseau social (exemple)</h3>
+    <div class="meta">Fuite : 2020 · base de comptes</div>
+    <table>
+      <thead><tr><th>Donnée</th><th>Niveau</th><th>Ce que ton outil affiche</th></tr></thead>
+      <tbody>
+        <tr><td>Mot de passe (haché)</td><td><span class="lvl hi">critique</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Pseudo</td><td><span class="lvl ">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+        <tr><td>Adresse IP</td><td><span class="lvl ">faible</span></td><td class="hide">✔ exposé · valeur masquée</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="legend">Ton outil indique seulement <b>qu'un type de donnée est exposé</b>. Il n'affiche jamais la valeur (ni l'IBAN, ni le numéro de téléphone).</p>
+
+  <h2>Que faire maintenant ?</h2>
+  <div class="tips">
+    <div class="tip red"><b>🔴 Aujourd'hui : appelle ta banque (IBAN exposé)</b>
+      <span>Signale la fuite, demande la surveillance du compte et l'activation des alertes. Un IBAN seul ne permet pas de retirer de l'argent, mais il permet de mettre en place des prélèvements frauduleux. Vérifie tes prélèvements SEPA et conteste immédiatement tout débit non autorisé. Selon le cas, ta banque peut proposer de changer de compte ou d'IBAN.</span></div>
+    <div class="tip red"><b>🔴 Aujourd'hui : change les mots de passe exposés</b>
+      <span>Commence par ta boîte mail, puis la banque et les achats. Un mot de passe unique par site, avec un gestionnaire (Bitwarden, KeePassXC), et le 2FA par application.</span></div>
+    <div class="tip red"><b>🔴 Pièce d'identité exposée</b>
+      <span>Surveille les usurpations (ouverture de crédits, abonnements, comptes en ligne). En cas d'utilisation frauduleuse : dépôt de plainte, signalement au service concerné, et démarches sur service-public.fr (usurpation d'identité).</span></div>
+    <div class="tip orange"><b>🟠 Numéro de sécurité sociale exposé</b>
+      <span>Vérifie ton compte ameli (mot de passe + 2FA), surveille tes remboursements et méfie-toi des faux courriels de l'Assurance maladie.</span></div>
+    <div class="tip orange"><b>🟠 Cette semaine : phishing ciblé</b>
+      <span>Les fraudeurs connaissent ton nom, ton adresse, ta banque. Ne communique jamais de code reçu par SMS. Un vrai conseiller ne te demande pas de « valider une opération » ni de transférer de l'argent. En cas de doute, raccroche et rappelle le numéro officiel.</span></div>
+    <div class="tip orange"><b>🟠 Surveille ton identité</b>
+      <span>Consulte régulièrement tes relevés, tes courriers et ton dossier au fichier de la Banque de France si besoin. Utilise des alias email pour tes nouvelles inscriptions.</span></div>
+    <div class="tip"><b>⚪ Ensuite : exerce tes droits RGPD</b>
+      <span>Demande l'effacement de tes données à chaque organisme. S'il ne répond pas sous un mois, saisis la CNIL. Les organismes doivent notifier les violations de données qui présentent un risque pour toi.</span></div>
+  </div>
+
+  <h2>Contacter l'organisme (courrier pré-rédigé)</h2>
+  <div class="card gen">
+    <p class="meta" style="margin:0">Choisis l'organisme : le courrier s'adapte aux données qui ont fuité. Tu peux tout modifier avant l'envoi. Rien n'est envoyé par le site, tout reste dans ton navigateur.</p>
+
+    <label for="g-org">Organisme concerné</label>
+    <select id="g-org"></select>
+
+    <label>Données exposées (décoche ou ajoute ce qui ne s'applique pas)</label>
+    <div class="checks" id="g-data"></div>
+
+    <div class="row">
+      <div><label for="g-nom">Ton nom et prénom</label><input id="g-nom" placeholder="Prénom NOM"></div>
+      <div><label for="g-mail">Email utilisé chez eux</label><input id="g-mail" placeholder="exemple@email.com"></div>
+    </div>
+    <label for="g-adr">Adresse postale</label><input id="g-adr" placeholder="12 rue Exemple, 75000 Paris">
+
+    <label for="g-oadr">Adresse postale de l'organisme (pour le courrier recommandé)</label>
+    <input id="g-oadr" placeholder="Service DPO, 10 rue Exemple, 75000 Paris (voir mentions légales)">
+
+    <label for="g-type">Type de demande</label>
+    <select id="g-type">
+      <option value="efface">Effacement + origine de la fuite</option>
+      <option value="acces">Accès à mes données seulement</option>
+    </select>
+
+    <div id="g-status"></div>
+
+    <label for="g-to">Destinataire (email du DPO)</label>
+    <input id="g-to" type="email" placeholder="dpo@organisme.fr">
+    <label for="g-subj">Objet</label>
+    <input id="g-subj">
+    <textarea id="g-out"></textarea>
+
+    <div class="btns">
+      <button type="button" id="g-mailto">Ouvrir ma messagerie</button>
+      <button type="button" class="sec" id="g-pdf">PDF pour envoi recommandé</button>
+      <button type="button" class="sec" id="g-copy">Copier le courrier</button>
+      <button type="button" class="sec" id="g-regen">Régénérer le texte</button>
+    </div>
+    <p class="meta" id="g-hint" style="margin:10px 0 0"></p>
+    <p class="meta" style="margin:6px 0 0">« PDF pour envoi recommandé » ouvre la fenêtre d'impression : choisis « Enregistrer au format PDF », puis envoie-le en recommandé (La Poste ou en ligne) ou imprime-le.</p>
+  </div>
+
+  <h2>Démarches utiles</h2>
+  <div class="actions">
+    <a class="btn primary" href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener">Saisir la CNIL</a>
+    <a class="btn" href="https://www.service-public.fr" target="_blank" rel="noopener">Service-Public (usurpation d'identité)</a>
+    <a class="btn" href="https://www.cybermalveillance.gouv.fr" target="_blank" rel="noopener">Cybermalveillance.gouv.fr</a>
+    <a class="btn" href="https://www.internet-signalement.gouv.fr" target="_blank" rel="noopener">Signaler (PHAROS)</a>
+    <a class="btn" href="#" onclick="return false">Surveiller mon email (alerte)</a>
+  </div>
+
+  <footer>Aucune donnée n'est conservée : l'email est traité en mémoire puis supprimé.</footer>
+</div>
+<div id="print-letter" aria-hidden="true"></div>
+<script>
+(function(){
+  // Données fictives de démonstration : adresses DPO d'exemple, à remplacer par une vraie base d'organismes.
+  var ORGS=[
+    {id:'free',    name:'Free Mobile',                   dpo:'',                              data:['Nom / Prénom','Email','Téléphone','Date de naissance','Adresse postale']},
+    {id:'banque',  name:'Banque / assurance (exemple)',  dpo:'dpo@banque-exemple.example',    data:['IBAN / RIB','Nom / Prénom','Date de naissance','Adresse postale','Téléphone','Email']},
+    {id:'telecom', name:'Opérateur télécom (exemple)',   dpo:'dpo@operateur-exemple.example', data:['Téléphone','Adresse postale','Email',"Pièce d'identité",'Numéro de sécurité sociale']},
+    {id:'boutique',name:'Boutique en ligne (exemple)',   dpo:'',                              data:['Mot de passe','Email','Historique de commandes','Adresse de livraison']},
+    {id:'forum',   name:'Forum / réseau social (exemple)',dpo:'',                             data:['Mot de passe','Pseudo','Adresse IP','Email']},
+    {id:'autre',   name:'Autre organisme…',              dpo:'',                              data:['Nom / Prénom','Email','Adresse postale','Téléphone','Date de naissance','Mot de passe','IBAN / RIB',"Pièce d'identité"]}
+  ];
+  var ALL=['Nom / Prénom','Email','Adresse postale','Téléphone','Date de naissance','Mot de passe','IBAN / RIB',"Pièce d'identité",'Numéro de sécurité sociale','Historique de commandes','Adresse de livraison','Pseudo','Adresse IP'];
+  // Demandes supplémentaires selon le type de donnée exposé
+  var EXTRA={
+    'IBAN / RIB':"Mon IBAN ayant été exposé, je vous demande de renforcer la surveillance de mon compte, de me signaler tout mandat ou prélèvement inhabituel et de m'indiquer la procédure pour contester un débit non autorisé.",
+    "Pièce d'identité":"Ma pièce d'identité ayant été exposée, je vous demande d'ajouter une mention de vigilance sur mon dossier et de me prévenir de toute demande suspecte faite en mon nom.",
+    'Numéro de sécurité sociale':"Mon numéro de sécurité sociale ayant été exposé, je vous demande de ne plus l'utiliser comme identifiant et de m'indiquer les mesures de sécurité prises.",
+    'Mot de passe':"Mon mot de passe ayant été exposé, je vous demande de m'indiquer s'il était stocké en clair ou haché, et de forcer sa réinitialisation."
+  };
+  var $=function(i){return document.getElementById(i)};
+  var edited=false, mailtoMax=1800;
+
+  function selectedOrg(){var v=$('g-org').value;return ORGS.filter(function(o){return o.id===v})[0]||ORGS[0]}
+  function checked(){return Array.prototype.slice.call($('g-data').querySelectorAll('input:checked')).map(function(i){return i.value})}
+
+  function fillOrgs(){
+    $('g-org').innerHTML=ORGS.map(function(o){return '<option value="'+o.id+'">'+o.name+'</option>'}).join('');
+  }
+  function fillData(){
+    var o=selectedOrg(), list=ALL.filter(function(d){return o.data.indexOf(d)>-1||false});
+    // on affiche tout le catalogue, coché si l'organisme l'a exposé
+    $('g-data').innerHTML=ALL.map(function(d,i){
+      return '<label><input type="checkbox" value="'+d+'"'+(o.data.indexOf(d)>-1?' checked':'')+'> '+d+'</label>';
+    }).join('');
+    Array.prototype.forEach.call($('g-data').querySelectorAll('input'),function(i){i.addEventListener('change',function(){edited=false;build()})});
+  }
+  function status(){
+    var o=selectedOrg();
+    if(o.dpo){
+      $('g-to').value=o.dpo;
+      $('g-status').innerHTML='<div class="known">✔ Adresse du DPO connue : <b>'+o.dpo+'</b>. Le destinataire est rempli, tu peux ouvrir ta messagerie en un clic.</div>';
+    }else{
+      $('g-to').value='';
+      $('g-status').innerHTML='<div class="unknown">⚠ Adresse du DPO inconnue pour cet organisme. Cherche « DPO », « données personnelles » ou « RGPD » dans ses mentions légales ou sa politique de confidentialité, ou utilise son formulaire de contact. Colle ensuite l\'adresse dans « Destinataire ». À défaut, envoie le courrier par voie postale au siège (de préférence en recommandé).</div>';
+    }
+  }
+  function build(){
+    if(edited)return;
+    var o=selectedOrg(), data=checked(), efface=$('g-type').value==='efface';
+    var nom=$('g-nom').value||'[Prénom NOM]', mail=$('g-mail').value||'[email]', adr=$('g-adr').value||'[adresse postale]';
+    var org=o.id==='autre'?"[Nom de l'organisme]":o.name.replace(' (exemple)','');
+    var date=new Date().toLocaleDateString('fr-FR');
+    var n=1, lines=[];
+    lines.push(n++ +". de me communiquer l'ensemble des données me concernant que vous détenez (art. 15), ainsi que leur origine, les finalités du traitement et la liste des destinataires ;");
+    if(efface){
+      lines.push(n++ +". de procéder à l'effacement complet de ces données dans les meilleurs délais (art. 17) ;");
+      lines.push(n++ +". de me confirmer par écrit cet effacement, y compris auprès de vos sous-traitants ;");
+    }
+    lines.push(n++ +". de m'indiquer si cette violation de données a été notifiée à la CNIL et si les personnes concernées ont été informées (art. 33 et 34).");
+    var extras=data.filter(function(d){return EXTRA[d]}).map(function(d){return EXTRA[d]});
+    var t=nom+'\n'+adr+'\n'+mail+'\n\n'+
+      org+"\nÀ l'attention du délégué à la protection des données (DPO)\n\n"+
+      'Le '+date+'\n\n'+
+      "Objet : "+subject()+'\n\n'+
+      'Madame, Monsieur,\n\n'+
+      "J'ai constaté que des données personnelles me concernant, associées à l'adresse "+mail+', ont été exposées lors d\'une violation de données impliquant votre organisme.\n\n'+
+      (data.length?'Les données concernées sont : '+data.join(', ')+'.\n\n':'')+
+      'En application du RGPD, je vous demande :\n'+lines.join('\n')+'\n\n'+
+      (extras.length?extras.join('\n')+'\n\n':'')+
+      "Conformément à l'article 12.3 du RGPD, vous disposez d'un délai d'un mois à compter de la réception de ce courrier pour me répondre. À défaut, je saisirai la CNIL.\n\n"+
+      "Pour vérifier mon identité, je reste disponible pour vous transmettre un justificatif sur demande, dans la limite de ce qui est nécessaire.\n\n"+
+      "Je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.\n\n"+nom;
+    $('g-out').value=t;
+    $('g-subj').value=subject();
+    hint();
+  }
+  function subject(){
+    return $('g-type').value==='efface'?"Demande d'effacement de mes données (art. 17 RGPD) suite à une violation":"Demande d'accès à mes données (art. 15 RGPD) suite à une violation";
+  }
+  function mailtoUrl(){
+    return 'mailto:'+encodeURIComponent($('g-to').value.trim())+'?subject='+encodeURIComponent($('g-subj').value)+'&body='+encodeURIComponent($('g-out').value);
+  }
+  function hint(){
+    var long=mailtoUrl().length>mailtoMax;
+    $('g-hint').textContent=long?"Le courrier est long : certaines messageries tronquent le texte. Si le corps est incomplet, utilise « Copier le courrier » et colle-le dans ton email.":'';
+  }
+
+  function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML}
+  function renderPrint(){
+    var o=selectedOrg(), full=$('g-out').value;
+    var nom=$('g-nom').value||'[Prénom NOM]', mail=$('g-mail').value||'[email]', adr=$('g-adr').value||'[adresse postale]';
+    var org=o.id==='autre'?"[Nom de l'organisme]":o.name.replace(' (exemple)','');
+    var oadr=$('g-oadr').value||"[Adresse postale de l'organisme]";
+    var i=full.indexOf('Madame, Monsieur,');
+    var date=new Date().toLocaleDateString('fr-FR');
+    var h;
+    if(i>-1){
+      h='<div class="pl-top"><div>'+esc(nom+'\n'+adr+'\n'+mail)+'</div>'+
+        '<div class="pl-to">'+esc(org+'\nÀ l\'attention du DPO\n'+oadr)+'</div></div>'+
+        '<div class="pl-lrar">Lettre recommandée avec accusé de réception n° ____________________</div>'+
+        '<div class="pl-date">Le '+esc(date)+'</div>'+
+        '<div class="pl-obj">Objet : '+esc($('g-subj').value)+'</div>'+
+        '<div class="pl-body">'+esc(full.slice(i))+'</div>';
+    }else{
+      h='<div class="pl-body">'+esc(full)+'</div>';
+    }
+    $('print-letter').innerHTML=h;
+  }
+  function flash(btn,txt){var o=btn.textContent;btn.textContent=txt;setTimeout(function(){btn.textContent=o},1500)}
+
+  fillOrgs(); fillData(); status();
+  $('g-org').addEventListener('change',function(){edited=false;fillData();status();build()});
+  ['g-nom','g-mail','g-adr','g-type'].forEach(function(i){$(i).addEventListener('input',build);$(i).addEventListener('change',build)});
+  $('g-out').addEventListener('input',function(){edited=true;hint()});
+  $('g-subj').addEventListener('input',hint);
+  $('g-regen').addEventListener('click',function(){edited=false;build();flash(this,'Régénéré ✔')});
+  $('g-mailto').addEventListener('click',function(){
+    if(!$('g-to').value.trim()&&!confirm("Aucun destinataire renseigné. Ouvrir quand même ta messagerie ?"))return;
+    window.location.href=mailtoUrl();
+  });
+  $('g-pdf').addEventListener('click',function(){
+    renderPrint();
+    window.print();
+  });
+  $('g-copy').addEventListener('click',function(){
+    var b=this,txt=$('g-out').value;
+    var ok=function(){flash(b,'Copié ✔')};
+    var fb=function(){$('g-out').select();document.execCommand('copy');ok()};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,fb)}else{fb()}
+  });
+  build();
+})();
+</script>
+</body>
+</html>
